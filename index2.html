@@ -1,3 +1,4 @@
+Voici le fichier HTML complet prêt à copier-coller :
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -436,11 +437,162 @@
                           <div className="flex items-center gap-3">
                             <input
                               type="range"
-                              value={pgVgRatio}
-                              onChange={(e) => setPgVgRatio(parseFloat(e.target.value))}
+                              value={base.pgPercent}
+                              onChange={(e) => {
+                                const newBases = [...bases];
+                                newBases[i].pgPercent = parseFloat(e.target.value);
+                                setBases(newBases);
+                              }}
                               className="flex-1"
                               min="0"
                               max="100"
                               step="5"
                             />
-                            <span className="text-
+                            <span className="text-xs w-12">{base.pgPercent}/{100-base.pgPercent}</span>
+                            {bases.length > 1 && (
+                              <button
+                                onClick={() => setBases(bases.filter((_, idx) => idx !== i))}
+                                className="p-1 text-red-600"
+                              >
+                                <Minus className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mb-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <h2 className="text-lg font-semibold">Arômes (100% PG)</h2>
+                          <button
+                            onClick={() => setAromes([...aromes, { nom: '', pourcentage: '' }])}
+                            className="flex items-center gap-2 px-3 py-1 bg-indigo-600 text-white rounded-lg text-sm"
+                          >
+                            <Plus className="w-4 h-4" />
+                            Ajouter
+                          </button>
+                        </div>
+                        {aromes.map((arome, i) => (
+                          <div key={i} className="flex gap-2 mb-2 items-center">
+                            <input
+                              type="text"
+                              value={arome.nom}
+                              onChange={(e) => {
+                                const newAromes = [...aromes];
+                                newAromes[i].nom = e.target.value;
+                                setAromes(newAromes);
+                              }}
+                              className="flex-1 min-w-0 px-3 py-2 border rounded-lg"
+                              placeholder="Nom"
+                            />
+                            <input
+                              type="number"
+                              value={arome.pourcentage}
+                              onChange={(e) => {
+                                const newAromes = [...aromes];
+                                newAromes[i].pourcentage = e.target.value;
+                                setAromes(newAromes);
+                              }}
+                              className="w-16 px-2 py-2 border rounded-lg"
+                              placeholder="10"
+                            />
+                            <span className="text-sm whitespace-nowrap">%</span>
+                            {aromes.length > 1 && (
+                              <button
+                                onClick={() => setAromes(aromes.filter((_, idx) => idx !== i))}
+                                className="p-2 text-red-600 flex-shrink-0"
+                              >
+                                <Minus className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-indigo-50 rounded-xl p-4">
+                        <div className="flex justify-between items-center mb-3">
+                          <h2 className="text-lg font-semibold flex items-center gap-2">
+                            <Calculator className="w-5 h-5" />
+                            Recette
+                          </h2>
+                          {results.possible && parseFloat(volume) > 0 && (
+                            <button
+                              onClick={saveRecipe}
+                              className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded-lg text-sm"
+                            >
+                              <Save className="w-4 h-4" />
+                              Sauvegarder
+                            </button>
+                          )}
+                        </div>
+
+                        {!results.possible ? (
+                          <div className="bg-red-100 p-3 rounded text-red-700">{results.message}</div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-white p-3 rounded">
+                              <p className="text-xs text-gray-600">Liquide nicotiné</p>
+                              <p className="text-xl font-bold text-indigo-600">{results.liquideNicotine.toFixed(2)} ml</p>
+                            </div>
+                            <div className="bg-white p-3 rounded">
+                              <p className="text-xs text-gray-600">Arômes</p>
+                              <p className="text-xl font-bold text-purple-600">{results.aromes.toFixed(2)} ml</p>
+                            </div>
+                            {results.basesUsed.map((base, i) => (
+                              <div key={i} className="bg-white p-3 rounded">
+                                <p className="text-xs text-gray-600">Base {base.nom}</p>
+                                <p className="text-xl font-bold text-green-600">{base.volume.toFixed(2)} ml</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="space-y-3">
+                      {savedRecipes.length === 0 ? (
+                        <p className="text-gray-500 text-center py-8">Aucune recette sauvegardée</p>
+                      ) : (
+                        savedRecipes.map((recipe) => (
+                          <div key={recipe.id} className="bg-gray-50 p-4 rounded-lg">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-semibold">{recipe.volume}ml - {recipe.targetNicotine}mg/ml</p>
+                                <p className="text-sm text-gray-600">{recipe.date} à {recipe.time}</p>
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => loadRecipe(recipe)}
+                                  className="px-3 py-1 bg-indigo-600 text-white rounded text-sm"
+                                >
+                                  Charger
+                                </button>
+                                <button
+                                  onClick={() => deleteRecipe(recipe.id)}
+                                  className="p-1 text-red-600"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                            {recipe.aromes.length > 0 && (
+                              <div className="text-sm text-gray-600">
+                                Arômes: {recipe.aromes.map(a => `${a.nom || 'Sans nom'} ${a.pourcentage}%`).join(', ')}
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<ELiquidCalculator />);
+    </script>
+</body>
+</html>
