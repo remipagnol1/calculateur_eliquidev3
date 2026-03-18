@@ -1,62 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur e-liquide</title>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const volumeInput = document.getElementById('volume');
-            const pgInput = document.getElementById('pg');
-            const vgInput = document.getElementById('vg');
-            const resultDisplay = document.getElementById('result');
-            const calculationButton = document.getElementById('calculate');
-
-            const saveToLocalStorage = () => {
-                localStorage.setItem('volume', volumeInput.value);
-                localStorage.setItem('pg', pgInput.value);
-                localStorage.setItem('vg', vgInput.value);
-            };
-
-            const validateInputs = () => {
-                const volume = parseFloat(volumeInput.value);
-                const pg = parseFloat(pgInput.value);
-                const vg = parseFloat(vgInput.value);
-                if (isNaN(volume) || isNaN(pg) || isNaN(vg)) {
-                    alert('Please enter valid numeric values.');
-                    return false;
-                }
-                return true;
-            };
-
-            const calculate = () => {
-                if (!validateInputs()) return;
-                const volume = parseFloat(volumeInput.value);
-                const pg = parseFloat(pgInput.value);
-                const vg = parseFloat(vgInput.value);
-
-                const total = pg + vg;
-                const result = (volume * pg) / total;
-                resultDisplay.textContent = `Your final mix is: ${result} ml of PG.`;
-                saveToLocalStorage();
-            };
-
-            calculationButton.addEventListener('click', calculate);
-            volumeInput.value = localStorage.getItem('volume') || '';
-            pgInput.value = localStorage.getItem('pg') || '';
-            vgInput.value = localStorage.getItem('vg') || '';
-        });
-    </script>
+    <title>Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #calculator, #recipes { display: none; }
+    </style>
 </head>
 <body>
-    <h1>Calculateur E-liquide</h1>
-    <label for="volume">Volume (ml):</label>
-    <input type="number" id="volume" required>
-    <label for="pg">PG (%):</label>
-    <input type="number" id="pg" required min="0" max="100">
-    <label for="vg">VG (%):</label>
-    <input type="number" id="vg" required min="0" max="100">
-    <button id="calculate">Calculate</button>
-    <div id="result"></div>
+    <h1>E-Liquid Calculator</h1>
+    <div>
+        <button onclick="showTab('calculator')">Calculator</button>
+        <button onclick="showTab('recipes')">Recipes</button>
+    </div>
+    <div id="calculator">
+        <!-- Calculator functionality goes here -->
+        <h2>Calculator</h2>
+        <form id="calcForm" onsubmit="return calculate();">
+            <label for="nicotine">Nicotine Amount:</label>
+            <input type="number" id="nicotine" required>
+            <label for="pg">PG:</label>
+            <input type="number" id="pg" required>
+            <label for="vg">VG:</label>
+            <input type="number" id="vg" required>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="calcResult"></div>
+    </div>
+    <div id="recipes">
+        <!-- Recipe management functionality goes here -->
+        <h2>Recipes</h2>
+        <form id="recipeForm" onsubmit="return saveRecipe();">
+            <label for="recipeName">Recipe Name:</label>
+            <input type="text" id="recipeName" required>
+            <button type="submit">Save Recipe</button>
+        </form>
+        <div id="savedRecipes"></div>
+    </div>
+    <script>
+        function showTab(tabName) {
+            document.getElementById('calculator').style.display = tabName === 'calculator' ? 'block' : 'none';
+            document.getElementById('recipes').style.display = tabName === 'recipes' ? 'block' : 'none';
+        }
+
+        function calculate() {
+            const nicotine = document.getElementById('nicotine').value;
+            const pg = document.getElementById('pg').value;
+            const vg = document.getElementById('vg').value;
+            // Add calculation logic here
+            document.getElementById('calcResult').innerText = `Results: Nicotine ${nicotine}, PG ${pg}, VG ${vg}`;
+            return false; // Prevent form submission
+        }
+
+        function saveRecipe() {
+            const recipeName = document.getElementById('recipeName').value;
+            // Add recipe saving logic here
+            const savedRecipesDiv = document.getElementById('savedRecipes');
+            savedRecipesDiv.innerHTML += `<div>${recipeName}</div>`;
+            return false; // Prevent form submission
+        }
+
+        // Initialize the first tab as visible
+        showTab('calculator');
+    </script>
 </body>
 </html>
