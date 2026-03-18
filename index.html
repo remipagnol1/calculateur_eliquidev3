@@ -4,66 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        #calculator, #recipes { display: none; }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.16.7/babel.min.js"></script>
 </head>
-<body>
-    <h1>E-Liquid Calculator</h1>
-    <div>
-        <button onclick="showTab('calculator')">Calculator</button>
-        <button onclick="showTab('recipes')">Recipes</button>
-    </div>
-    <div id="calculator">
-        <!-- Calculator functionality goes here -->
-        <h2>Calculator</h2>
-        <form id="calcForm" onsubmit="return calculate();">
-            <label for="nicotine">Nicotine Amount:</label>
-            <input type="number" id="nicotine" required>
-            <label for="pg">PG:</label>
-            <input type="number" id="pg" required>
-            <label for="vg">VG:</label>
-            <input type="number" id="vg" required>
-            <button type="submit">Calculate</button>
+<body class="bg-gray-100 p-4">
+    <div id="calculator" class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-xl font-bold mb-4">E-Liquid Calculator</h1>
+        <form id="calcForm">
+            <div class="mb-4">
+                <label for="base" class="block text-sm font-medium text-gray-700">Select Base:</label>
+                <select id="base" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                    <option value="50/50">50/50</option>
+                    <option value="70/30">70/30</option>
+                    <option value="100">100%</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="nicotine" class="block text-sm font-medium text-gray-700">Nicotine Level (mg/ml):</label>
+                <input type="number" id="nicotine" min="0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
+            </div>
+            <div class="mb-4">
+                <label for="pgvg" class="block text-sm font-medium text-gray-700">PG/VG Ratio:</label>
+                <input type="text" id="pgvg" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="e.g. 70/30" required />
+            </div>
+            <div class="mb-4">
+                <label for="aromatics" class="block text-sm font-medium text-gray-700">Aromatics:</label>
+                <input type="text" id="aromatics" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Aromatic names" />
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 rounded">Calculate</button>
         </form>
-        <div id="calcResult"></div>
-    </div>
-    <div id="recipes">
-        <!-- Recipe management functionality goes here -->
-        <h2>Recipes</h2>
-        <form id="recipeForm" onsubmit="return saveRecipe();">
-            <label for="recipeName">Recipe Name:</label>
-            <input type="text" id="recipeName" required>
-            <button type="submit">Save Recipe</button>
-        </form>
-        <div id="savedRecipes"></div>
+        <div id="result" class="mt-4 text-lg"></div>
     </div>
     <script>
-        function showTab(tabName) {
-            document.getElementById('calculator').style.display = tabName === 'calculator' ? 'block' : 'none';
-            document.getElementById('recipes').style.display = tabName === 'recipes' ? 'block' : 'none';
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('calcForm');
+            const resultDiv = document.getElementById('result');
 
-        function calculate() {
-            const nicotine = document.getElementById('nicotine').value;
-            const pg = document.getElementById('pg').value;
-            const vg = document.getElementById('vg').value;
-            // Add calculation logic here
-            document.getElementById('calcResult').innerText = `Results: Nicotine ${nicotine}, PG ${pg}, VG ${vg}`;
-            return false; // Prevent form submission
-        }
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                calculateLiquid();
+            });
 
-        function saveRecipe() {
-            const recipeName = document.getElementById('recipeName').value;
-            // Add recipe saving logic here
-            const savedRecipesDiv = document.getElementById('savedRecipes');
-            savedRecipesDiv.innerHTML += `<div>${recipeName}</div>`;
-            return false; // Prevent form submission
-        }
+            function calculateLiquid() {
+                const nicotine = parseFloat(document.getElementById('nicotine').value);
+                const pgvg = document.getElementById('pgvg').value;
+                const base = document.getElementById('base').value;
+                // Perform calculations here based on user input
+                let result = `Base: ${base}, Nicotine: ${nicotine}mg/ml, PG/VG Ratio: ${pgvg}`;
+                resultDiv.textContent = result;
+                saveToLocalStorage({ nicotine, pgvg, base });
+            }
 
-        // Initialize the first tab as visible
-        showTab('calculator');
+            function saveToLocalStorage(data) {
+                localStorage.setItem('eliquidData', JSON.stringify(data));
+            }
+        });
     </script>
 </body>
 </html>
